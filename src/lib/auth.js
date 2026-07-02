@@ -8,4 +8,11 @@ const db = client.db(process.env.MONGODB);
 export const auth = betterAuth({
     emailAndPassword: { enabled: true},
     database: mongodbAdapter(db, {client}),
+    user:{
+        additionalFields:{
+            role:{
+                default: "seeker"
+            }
+        }
+    }
 });

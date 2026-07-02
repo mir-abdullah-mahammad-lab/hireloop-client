@@ -4,11 +4,26 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Bars, Xmark } from "@gravity-ui/icons";
+import { authClient, useSession } from "@/lib/auth-client";
+import { useRouter } from 'next/navigation';
 
 
 const Navbar =()=> {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+ const {data : session,isPending } = useSession()
+//  console.log(session?.user, `ispending= ${isPending}`)
+const user = session?.user
+const router = useRouter()
 
+const handleSignOut = async()=>{
+  await authClient.signOut({
+  fetchOptions: {
+    onSuccess: () => {
+      router.push("/"); 
+    },
+  },
+})
+}
   const navItems = [
     {
       label: "Browse Jobs",
@@ -69,12 +84,18 @@ const Navbar =()=> {
             <div className="h-5 w-px bg-white" />
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-4">
+            {user?
+             <> 
+             Hello!! {user?.name}
+             <Button variant="ghost" onClick={handleSignOut}>Sign-out</Button>
+             </> 
+            : 
             <Link
-              href="/login"
+              href="/auth/signin"
               className="text-sm font-medium text-violet-400 hover:text-violet-300"
             >
               Sign In
-            </Link>
+            </Link>}
 
             <Button
               as={Link}
@@ -108,7 +129,7 @@ const Navbar =()=> {
 
             <div className="mt-4 border-t border-white/10 pt-4 flex flex-col gap-3">
               <Link
-                href="/login"
+                href="/auth/signin"
                 className="px-3 py-2 text-violet-400"
               >
                 Sign In

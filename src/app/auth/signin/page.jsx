@@ -3,22 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, RadioGroupRoot } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { ArrowLeft, Eye, EyeSlash } from '@gravity-ui/icons';
 import { authClient } from '@/lib/auth-client';
-import {
-    TextField, Label, InputGroup,
-    Description, Radio, RadioGroup
-} from "@heroui/react";
+import { TextField, Label, InputGroup } from "@heroui/react";
 
-const SignUpPage = () => {
+const SignInPage = () => {
     const router = useRouter();
 
     // Form Field States
-    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [role, setRole] = useState('seeker')
 
     // UI and Feedback States
     const [isVisible, setIsVisible] = useState(false);
@@ -28,41 +23,38 @@ const SignUpPage = () => {
 
     const toggleVisibility = () => setIsVisible(!isVisible);
 
-    const handleSignUp = async (e) => {
+    const handleSignIn = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
         setLoading(true);
 
         // Basic Client-side Validation
-        if (!name || !email || !password) {
+        if (!email || !password) {
             setError('All fields are required.');
             setLoading(false);
             return;
         }
 
         try {
-            const response = await authClient.signUp.email({
+            const response = await authClient.signIn.email({
                 email,
                 password,
-                name,
-                role,
                 callbackURL: '/', // Route to redirect after successful authorization
             });
 
             if (response?.error) {
-                // Capture specific error messages dispatched from your Better Auth configuration
-                setError(response.error.message || 'Failed to sign up. Please try again.');
+                // Capture specific error messages from Better Auth configuration
+                setError(response.error.message || 'Invalid email or password.');
             } else {
-                setSuccess('Account created successfully! Redirecting...');
-                setName('');
+                setSuccess('Signed in successfully! Redirecting...');
                 setEmail('');
                 setPassword('');
 
-                // Timeout to let the user see the success validation before updating views
+                // Timeout to let the user see the success validation
                 setTimeout(() => {
-                    router.push('/auth/signin');
-                }, 2000);
+                    router.push('/');
+                }, 1500);
             }
         } catch (err) {
             setError('An unexpected network error occurred.');
@@ -79,17 +71,17 @@ const SignUpPage = () => {
                 {/* Back Navigation & Headers */}
                 <div className="flex flex-col space-y-2">
                     <Link
-                        href="/signin"
+                        href="/"
                         className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors w-fit"
                     >
                         <ArrowLeft className="w-4 h-4" />
-                        Back to Sign In
+                        Back to Home
                     </Link>
                     <h2 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-zinc-50">
-                        Create your account
+                        Sign in to your account
                     </h2>
                     <p className="text-sm text-gray-500 dark:text-zinc-400">
-                        Join us by filling out the details below.
+                        Welcome back! Please enter your details below.
                     </p>
                 </div>
 
@@ -105,25 +97,10 @@ const SignUpPage = () => {
                     </div>
                 )}
 
-
-                <form onSubmit={handleSignUp} className="space-y-4">
-
-                    {/* Name Field */}
-                    <TextField isRequired className="w-full">
-                        <Label>Name</Label>
-                        <InputGroup>
-                            <InputGroup.Input
-                                type="text"
-                                placeholder="Enter your name"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                disabled={loading}
-                            />
-                        </InputGroup>
-                    </TextField>
+                <form onSubmit={handleSignIn} className="space-y-4">
 
                     {/* Email Field */}
-                    <TextField isRequired className= "w-full">
+                    <TextField isRequired className="w-full">
                         <Label>Email</Label>
                         <InputGroup>
                             <InputGroup.Input
@@ -163,54 +140,24 @@ const SignUpPage = () => {
                         </InputGroup>
                     </TextField>
 
-                    {/* RBAC - Selection     */}
-                    
-                        
-                        
-                        <RadioGroup orientation='horizontal' defaultValue="seeker" name='role' onChange={(v)=>{setRole(v)}}> 
-                            <Label>Select Role</Label>
-                            <Radio  value="seeker" >
-                            <Radio.Content>
-                                <Radio.Control>
-                                    <Radio.Indicator className='bg-gray-50'/>
-                                </Radio.Control>
-                                Job Seeker
-                            </Radio.Content>
-                           
-                        </Radio>
-                        <Radio value="recruiter" >
-                            <Radio.Content>
-                                <Radio.Control>
-                                    <Radio.Indicator className='bg-gray-50' />
-                                </Radio.Control>
-                                Recruiter
-                            </Radio.Content>
-                           
-                        </Radio>
-                        </RadioGroup>
-                        
-                        
-                   
-
-                    
                     <Button
                         type="submit"
                         color="primary"
                         className="w-full mt-2 font-medium"
                         isLoading={loading}
                     >
-                        Sign Up
+                        Sign In
                     </Button>
                 </form>
 
                 {/* Alternate Navigation Toggle at Bottom */}
                 <p className="text-center text-sm text-gray-500 dark:text-zinc-400">
-                    Already have an account?{' '}
+                    Dont have an account?{' '}
                     <Link
-                        href="/signin"
+                        href="/signup"
                         className="font-medium text-primary hover:underline"
                     >
-                        Sign In
+                        Sign Up
                     </Link>
                 </p>
             </div>
@@ -218,4 +165,4 @@ const SignUpPage = () => {
     );
 }
 
-export default SignUpPage
+export default SignInPage;
