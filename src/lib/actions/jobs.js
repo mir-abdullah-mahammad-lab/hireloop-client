@@ -9,4 +9,5 @@ export const  createJob = async (newJobData) =>{
     body :JSON.stringify(newJobData)
 
    })
+   return await res.json()
 }

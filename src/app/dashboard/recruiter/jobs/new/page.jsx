@@ -11,7 +11,7 @@ const PostJobPage =() =>{
 
   // Mocked authenticated company check from Recruiter Profile / Better Auth metadata
   const [company, setCompany] = useState({
-    name: 'Acme Corp',
+    name: 'Acme-Corp',
     isApproved: true,
     activeJobsCount: 2,
     maxJobLimit: 10, // Growth Plan limit

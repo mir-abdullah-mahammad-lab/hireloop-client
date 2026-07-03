@@ -1,20 +1,50 @@
 "use client";
 
 import React, { useState } from "react";
-import { Form, Button, Input, TextArea, Label, ListBox, Select } from "@heroui/react";
+import { Form, Button, Input, TextArea, Label, ListBox, Select, toast } from "@heroui/react";
 import { Xmark, MapPinPlus, ArrowUpFromLine } from "@gravity-ui/icons";
 import { redirect } from "next/navigation";
+import { createCompany } from "@/lib/actions/companies";
 
 const RegisterCompanyForm = () => {
     const [logo, setLogo] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        if (logo) formData.append("logo", logo);
 
+        if (logo) {
+          const formDataWithImageUrl = new FormData()
+          formDataWithImageUrl.append('image',logo)
+         
+
+          
+            const my_key = process.env.NEXT_PUBLIC_IMAGE_API
+            const url = await fetch(`https://api.imgbb.com/1/upload?key=${my_key}`,{
+              method:'POST',
+              body: formDataWithImageUrl 
+              })
+            const im = await url.json()
+            console.log(im)
+
+          
+          // console.log(im.data.url, 'url-of-the-image')
+           formData.append('image', im.data.url)
         const data = Object.fromEntries(formData.entries());
         console.log("Registering Company Data:", data);
+
+        };
+        
+        const data = Object.fromEntries(formData.entries());
+        console.log("Registering Company Data:", data);
+
+        const payload = await createCompany(data)
+        // console.log(payload, 'sadiaaaaaaaaaaaaaaaaaaa')
+        if(payload.insertedId){
+          toast.success("Company sucessfully created !!!")
+          redirect("/dashboard/recruiter")
+           
+        }
     };
     const onClose = ()=>{
             redirect('/dashboard/recruiter')
@@ -23,7 +53,7 @@ const RegisterCompanyForm = () => {
         <div className="w-full max-w-2xl mx-auto bg-[#121214] text-white p-6 rounded-xl border border-[#27272a] shadow-2xl relative">
       {/* Close Button Icon */}
       <button 
-        // onClick={onClose}
+        onClick={onClose}
         className="absolute top-5 right-5 text-zinc-400 hover:text-white transition-colors z-10"
         type="button"
         aria-label="Close"
@@ -46,19 +76,15 @@ const RegisterCompanyForm = () => {
             label="Company Name"
             name="companyName"
             // labelPlacement="outside"
-            placeholder="e.g. Acme Corp"
-            isRequired
-            classNames={{
-              inputWrapper: "bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 h-11",
-              input: "text-white placeholder:text-zinc-500 text-sm",
-              label: "text-zinc-300 font-medium text-sm mb-1.5"
-            }}
+            placeholder="e.g. Acme-Corp"
+            required
+            className="text-white placeholder:text-zinc-500 text-sm required"
           />
 
           {/* Sub-component Select Pattern for Industry */}
           <Select name="category" placeholder="Select category" className="w-full">
             <Label className="text-zinc-300 font-medium text-sm mb-1.5 block">Industry / Category</Label>
-            <Select.Trigger className="bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 h-11 w-full rounded-xl px-3 flex items-center justify-between text-zinc-300 text-sm">
+            <Select.Trigger className="bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:border-zinc-400! h-11 w-full rounded-xl px-3 flex items-center justify-between text-zinc-300 text-sm">
               <Select.Value className="text-white text-sm" />
               <Select.Indicator />
             </Select.Trigger>
@@ -90,38 +116,27 @@ const RegisterCompanyForm = () => {
           <Input
             label="Website URL"
             name="website"
-            // labelPlacement="outside"
+            required
             placeholder="www.company.com"
-            startContent={<span className="text-zinc-500 text-sm select-none pr-1">https://</span>}
-            classNames={{
-              inputWrapper: "bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 h-11",
-              input: "text-white placeholder:text-zinc-600 text-sm",
-              label: "text-zinc-300 font-medium text-sm mb-1.5"
-            }}
+            className= "text-white placeholder:text-zinc-600 text-sm"
           />
 
           <Input
             label="Location"
             name="location"
-            // labelPlacement="outside"
             placeholder="City, Country"
-            isRequired
-            startContent={<MapPinPlus size={16} className="text-zinc-500" />}
-            classNames={{
-              inputWrapper: "bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 h-11",
-              input: "text-white placeholder:text-zinc-600 text-sm",
-              label: "text-zinc-300 font-medium text-sm mb-1.5"
-            }}
-          />
+            required
+            className="text-white placeholder:text-zinc-600 text-sm"        
+            />
+
         </div>
 
         {/* Row 3: Employee Count Range & Company Logo */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full items-end">
           
-          {/* Sub-component Select Pattern for Employee Range */}
           <Select name="employeeCount" placeholder="Select employee range" className="w-full">
             <Label className="text-zinc-300 font-medium text-sm mb-1.5 block">Employee Count Range</Label>
-            <Select.Trigger className="bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 h-11 w-full rounded-xl px-3 flex items-center justify-between text-zinc-300 text-sm">
+            <Select.Trigger className="bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:border-zinc-400! h-11 w-full rounded-xl px-3 flex items-center justify-between text-zinc-300 text-sm">
               <Select.Value className="text-white text-sm" />
               <Select.Indicator />
             </Select.Trigger>
@@ -161,7 +176,7 @@ const RegisterCompanyForm = () => {
                 <ArrowUpFromLine size={16} />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-xs font-medium text-zinc-200 truncate max-w-[180px]">
+                <span className="text-xs font-medium text-zinc-200 truncate max-w-45">
                   {logo ? logo.name : "Upload image"}
                 </span>
                 {!logo && <span className="text-[10px] text-zinc-500">PNG, JPG up to 5MB</span>}
@@ -172,17 +187,12 @@ const RegisterCompanyForm = () => {
 
         {/* Description Textarea */}
         <div className="w-full">
-          <TextArea
+          <TextArea fullWidth
             label="Brief Description"
             name="description"
-            // labelPlacement="outside"
+            required
             placeholder="Tell us about your company's mission and culture..."
-            minRows={3}
-            classNames={{
-              inputWrapper: "bg-[#1c1c1f] border border-[#27272a] hover:border-zinc-500 focus-within:!border-zinc-400 p-3",
-              input: "text-white placeholder:text-zinc-600 text-sm resize-none",
-              label: "text-zinc-300 font-medium text-sm mb-1.5"
-            }}
+            className="text-white placeholder:text-zinc-600 text-sm resize-none"
           />
         </div>
 
