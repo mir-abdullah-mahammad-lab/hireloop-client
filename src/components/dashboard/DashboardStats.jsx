@@ -1,11 +1,10 @@
 'use client';
 
 import StatCard from '@/components/dashboard/StatCard';
-// Make sure @gravity-ui/icons is installed
-import { Bookmark, PaperPlane, Calendar, Medal} from '@gravity-ui/icons';
+
 
 const DashboardStats =({statsData}) =>{
-  // Mock data structure matching your exact image layout
+ 
   
 
   return (

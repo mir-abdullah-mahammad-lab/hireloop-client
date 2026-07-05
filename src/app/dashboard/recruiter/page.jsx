@@ -5,11 +5,12 @@ import DashboardStats from '@/components/dashboard/DashboardStats';
 import { Bookmark, PaperPlane, Calendar, Medal} from '@gravity-ui/icons';
 const RecruiterDashboardHomePage = () => {
   const {data:session, isPending} = useSession()
+
  if(isPending){
   return <>Loading...</>
  }
  const user = session?.user
- console.log(user.role)
+ console.log(user, 'session from user')
 
  const statsData = [
     {

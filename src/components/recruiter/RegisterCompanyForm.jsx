@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import { Form, Button, Input, TextArea, Label, ListBox, Select, toast } from "@heroui/react";
-import { Xmark, MapPinPlus, ArrowUpFromLine } from "@gravity-ui/icons";
+import { Xmark, ArrowUpFromLine } from "@gravity-ui/icons";
 import { redirect } from "next/navigation";
 import { createCompany } from "@/lib/actions/companies";
 
-const RegisterCompanyForm = () => {
-    const [logo, setLogo] = useState(null);
+const RegisterCompanyForm = ({recruiter, recruiterCompany}) => {
+  console.log(recruiterCompany, recruiter.id,'recruiter id from db')
+  const [logo, setLogo] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,6 +17,7 @@ const RegisterCompanyForm = () => {
         if (logo) {
           const formDataWithImageUrl = new FormData()
           formDataWithImageUrl.append('image',logo)
+
          
 
           
@@ -30,8 +32,9 @@ const RegisterCompanyForm = () => {
           
           // console.log(im.data.url, 'url-of-the-image')
            formData.append('image', im.data.url)
+           formData.append(' recruiterId',  recruiter.id)
         const data = Object.fromEntries(formData.entries());
-        console.log("Registering Company Data:", data);
+        // console.log("Registering Company Data:", data);
 
         };
         
@@ -39,7 +42,7 @@ const RegisterCompanyForm = () => {
         console.log("Registering Company Data:", data);
 
         const payload = await createCompany(data)
-        // console.log(payload, 'sadiaaaaaaaaaaaaaaaaaaa')
+        // console.log(payload, 'payLoaddd')
         if(payload.insertedId){
           toast.success("Company sucessfully created !!!")
           redirect("/dashboard/recruiter")
@@ -69,6 +72,9 @@ const RegisterCompanyForm = () => {
 
       {/* HeroUI Form Context */}
       <Form onSubmit={handleSubmit} className="flex flex-col gap-5">
+
+        {/* Hidden field to pass recruiter id into FormData */}
+        <input type="hidden" name="recruiterId" value={recruiter?.id || ""} />
         
         {/* Row 1: Company Name & Industry */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full items-end">

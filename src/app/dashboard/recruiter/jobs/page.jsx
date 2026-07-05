@@ -1,11 +1,14 @@
 
 import JobsTable from '@/components/recruiter/JobsTable';
 import { getCompanyJob } from '@/lib/api/jobs';
+import { getUserSession } from '@/lib/core/session';
 
 const RecruiterJobs = async() => {  
-        const companyId = "Acme-Corp";
-        const jobs_res = await getCompanyJob(companyId);
-        console.log(jobs_res,'bingooooo')
+        const user = await getUserSession()
+        console.log(user, "/line-8-recruiter/job")
+        const recruiterId = user?.id;
+        const jobs_res = await getCompanyJob(recruiterId);
+        console.log(jobs_res,'line-11/rec/job')
      
  
 

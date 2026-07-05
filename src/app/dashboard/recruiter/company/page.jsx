@@ -1,12 +1,17 @@
-import RegisterCompanyForm from '@/components/recruiter/RegisterCompanyForm';
 import React from 'react';
+import CompanyPage from './CompanyPage';
+import { getUserSession } from '@/lib/core/session';
+import { getRecruiterCompany } from '@/lib/api/companies';
 
-const CompanyPage = () => {
+const CompanyPageRegistration = async() => {
+    const user = await getUserSession()
+    const company = getRecruiterCompany(user?.id)
+   
     return (
         <div>
-            <RegisterCompanyForm></RegisterCompanyForm>
+           <CompanyPage recruiter={user} recruiterCompany={company}></CompanyPage>
         </div>
     );
 };
 
-export default CompanyPage;
+export default CompanyPageRegistration;
