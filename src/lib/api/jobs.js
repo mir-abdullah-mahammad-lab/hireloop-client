@@ -10,3 +10,7 @@ export const getCompanyJob =  async (recruiterId)=>{
 export const getJobs = async ()=>{
     return serverFetch(`/api/jobs`)
 }
+
+export const getJobsById = async (jobId) =>{
+    return serverFetch(`/api/jobs/${jobId}`)
+}
