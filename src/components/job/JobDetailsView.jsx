@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button, Card} from '@heroui/react';
 import { Briefcase, Compass, CircleDollar, Calendar, ShieldCheck, Gift } from "@gravity-ui/icons";
+import { redirect } from 'next/navigation';
 
 export default function JobDetailsView({ job }) {
     if (!job) {
@@ -14,6 +15,7 @@ export default function JobDetailsView({ job }) {
     }
 
     const {
+        _id,
         title,
         category,
         type,
@@ -34,8 +36,7 @@ export default function JobDetailsView({ job }) {
     const workModeText = isRemote ? "Remote" : "Hybrid / On-site";
 
     const handleApply = () => {
-        // Implement your application tracking logic or external link redirect here
-        alert(`Applying for ${title}!`);
+        redirect(`/jobs/${_id}/apply`)
     };
 
     return (

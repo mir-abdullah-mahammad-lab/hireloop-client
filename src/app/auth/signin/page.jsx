@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@heroui/react';
 import { ArrowLeft, Eye, EyeSlash } from '@gravity-ui/icons';
 import { authClient } from '@/lib/auth-client';
@@ -14,6 +14,10 @@ const SignInPage = () => {
     // Form Field States
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirect") || "/"
+    console.log(redirectTo, 'Go to the path to')
 
     // UI and Feedback States
     const [isVisible, setIsVisible] = useState(false);
@@ -40,7 +44,7 @@ const SignInPage = () => {
             const response = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL: '/', // Route to redirect after successful authorization
+                // callbackURL: '/', 
             });
 
             if (response?.error) {
@@ -50,11 +54,7 @@ const SignInPage = () => {
                 setSuccess('Signed in successfully! Redirecting...');
                 setEmail('');
                 setPassword('');
-
-                // Timeout to let the user see the success validation
-                setTimeout(() => {
-                    router.push('/');
-                }, 1500);
+                router.push(redirectTo)
             }
         } catch (err) {
             setError('An unexpected network error occurred.');
@@ -150,11 +150,10 @@ const SignInPage = () => {
                     </Button>
                 </form>
 
-                {/* Alternate Navigation Toggle at Bottom */}
                 <p className="text-center text-sm text-gray-500 dark:text-zinc-400">
                     Dont have an account?{' '}
                     <Link
-                        href="/signup"
+                        href={`/auth/signup?redirect=${redirectTo}`}
                         className="font-medium text-primary hover:underline"
                     >
                         Sign Up

@@ -35,7 +35,7 @@ const handleSignOut = async()=>{
     },
     {
       label: "Pricing",
-      href: "/pricing",
+      href: "/plans",
     },
   ];
 
@@ -68,8 +68,7 @@ const handleSignOut = async()=>{
           </div>
 
          <div className="hidden md:flex gap-5 items-center justify-center">
-               {/* Desktop Navigation */}
-          <ul className=" flex items-center gap-8">
+            <ul className="flex items-center gap-8">
             {navItems.map((item) => (
               <li key={item.label}>
                 <Link

@@ -2,18 +2,16 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button, RadioGroupRoot } from '@heroui/react';
+import { useRouter,useSearchParams } from 'next/navigation';
+import { Button, } from '@heroui/react';
 import { ArrowLeft, Eye, EyeSlash } from '@gravity-ui/icons';
 import { authClient } from '@/lib/auth-client';
-import {
-    TextField, Label, InputGroup,
-    Description, Radio, RadioGroup
-} from "@heroui/react";
+import {TextField, Label, InputGroup, Radio, RadioGroup} from "@heroui/react";
 
 const SignUpPage = () => {
     const router = useRouter();
-
+    const searchParam =  useSearchParams()
+   const  redirectTo = searchParam.get("redirect") || "/"
     // Form Field States
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -47,7 +45,7 @@ const SignUpPage = () => {
                 password,
                 name,
                 role,
-                callbackURL: '/', // Route to redirect after successful authorization
+                
             });
 
             if (response?.error) {
@@ -58,11 +56,8 @@ const SignUpPage = () => {
                 setName('');
                 setEmail('');
                 setPassword('');
-
-                // Timeout to let the user see the success validation before updating views
-                setTimeout(() => {
-                    router.push('/auth/signin');
-                }, 2000);
+                router.push(redirectTo);
+              
             }
         } catch (err) {
             setError('An unexpected network error occurred.');
@@ -188,10 +183,6 @@ const SignUpPage = () => {
                            
                         </Radio>
                         </RadioGroup>
-                        
-                        
-                   
-
                     
                     <Button
                         type="submit"
@@ -207,7 +198,7 @@ const SignUpPage = () => {
                 <p className="text-center text-sm text-gray-500 dark:text-zinc-400">
                     Already have an account?{' '}
                     <Link
-                        href="/signin"
+                        href={`/auth/signin?redirect=${redirectTo}`}
                         className="font-medium text-primary hover:underline"
                     >
                         Sign In
