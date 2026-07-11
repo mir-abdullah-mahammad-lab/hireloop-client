@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Card, Button, Chip, Accordion } from "@heroui/react";
 // Gravity UI Icons
 import { CircleCheck, Thunderbolt, Flame, House, Person } from "@gravity-ui/icons";
+import Link from 'next/link';
 
 const Planpage = () => {
     // Client state tracking for selector
@@ -15,6 +16,7 @@ const Planpage = () => {
         seeker: [
             {
                 name: "Free",
+                id:'seeker_free',
                 price: "$0",
                 period: "/forever",
                 description: "Essential tools to kickstart your job hunting journey.",
@@ -30,6 +32,7 @@ const Planpage = () => {
             },
             {
                 name: "Pro",
+                id:'seeker_pro',
                 price: "$19",
                 period: "/month",
                 description: "Accelerate your search with advanced tracking.",
@@ -46,6 +49,7 @@ const Planpage = () => {
             },
             {
                 name: "Premium",
+                id:'seeker_premium',
                 price: "$39",
                 period: "/month",
                 description: "Ultimate exposure directly to high-tier employers.",
@@ -64,6 +68,7 @@ const Planpage = () => {
         recruiter: [
             {
                 name: "Free",
+                id:'recruiter_free',
                 price: "$0",
                 period: "/forever",
                 description: "Perfect for testing or finding your first core hire.",
@@ -79,6 +84,7 @@ const Planpage = () => {
             },
             {
                 name: "Growth",
+                id:'recruiter_growth',
                 price: "$49",
                 period: "/month",
                 description: "Scale your workforce with targeted analytic views.",
@@ -95,6 +101,7 @@ const Planpage = () => {
             },
             {
                 name: "Enterprise",
+                id:'recruiter_enterprise',
                 price: "$149",
                 period: "/month",
                 description: "Complete custom pipeline tooling for large operations.",
@@ -117,18 +124,17 @@ const Planpage = () => {
 
     return (
         <main className="max-w-6xl mx-auto px-4 py-12 md:py-20 space-y-16">
-            
+
             {/* 1. Interactive Role Switcher Toggle */}
             <div className="flex justify-center">
                 <div className="inline-flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200/40">
                     <button
                         type="button"
                         onClick={() => setUserRole("seeker")}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                            userRole === "seeker"
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${userRole === "seeker"
                                 ? "bg-white dark:bg-slate-800 text-primary shadow-sm"
                                 : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
-                        }`}
+                            }`}
                     >
                         <Person width={16} height={16} />
                         For Job Seekers
@@ -136,11 +142,10 @@ const Planpage = () => {
                     <button
                         type="button"
                         onClick={() => setUserRole("recruiter")}
-                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                            userRole === "recruiter"
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 ${userRole === "recruiter"
                                 ? "bg-white dark:bg-slate-800 text-primary shadow-sm"
                                 : "text-slate-500 hover:text-slate-800 dark:hover:text-slate-300"
-                        }`}
+                            }`}
                     >
                         <House width={16} height={16} />
                         For Recruiters
@@ -154,11 +159,10 @@ const Planpage = () => {
                     <Card
                         key={index}
                         variant={plan.variant}
-                        className={`flex flex-col justify-between h-full border transition-all duration-200 relative ${
-                            plan.isFeatured
+                        className={`flex flex-col justify-between h-full border transition-all duration-200 relative ${plan.isFeatured
                                 ? "border-primary shadow-lg ring-4 ring-primary/5 scale-102 z-10 m-2"
                                 : "border-slate-200 dark:border-slate-800 shadow-sm"
-                        }`}
+                            }`}
                     >
                         {plan.isFeatured && (
                             <span className="absolute -top-3.7 left-1/2 transform -translate-x-1/2 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full uppercase tracking-widest flex items-center gap-1 shadow-sm">
@@ -188,9 +192,8 @@ const Planpage = () => {
                                 {plan.features.map((feature, idx) => (
                                     <li key={idx} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-400">
                                         <CircleCheck
-                                            className={`mt-0.5 shrink-0 ${
-                                                plan.isFeatured ? "text-primary" : "text-slate-400"
-                                            }`}
+                                            className={`mt-0.5 shrink-0 ${plan.isFeatured ? "text-primary" : "text-slate-400"
+                                                }`}
                                             width={16}
                                             height={16}
                                         />
@@ -199,15 +202,18 @@ const Planpage = () => {
                                 ))}
                             </ul>
 
-                            <Button
-                                color={plan.buttonColor}
-                                variant={plan.isFeatured ? "solid" : "flat"}
-                                size="lg"
-                                className="w-full font-bold tracking-wide"
-                                endContent={plan.isFeatured ? <Thunderbolt width={16} height={16} /> : null}
-                            >
-                                {plan.buttonText}
-                            </Button>
+
+                            <form action="/api/checkout_sessions" method="POST">
+                            <input type="hidden" name='plan_id' value={plan.id} />
+                                <section>
+                                    <button type="submit" role="link" 
+                                    className="w-full font-bold tracking-wide">
+                                        Checkout
+                                    </button>
+                                </section>
+                            </form>
+
+                           
                         </Card.Content>
                     </Card>
                 ))}

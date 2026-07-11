@@ -28,7 +28,7 @@ const ApplyPage = async ({ params }) => {
                 </div>
                 <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Access Denied</h1>
                 <p className="text-slate-500 max-w-sm mb-6">Only registered job seekers can submit applications for open roles.</p>
-                <Link href="/jobs" passHref legacyBehavior>
+                <Link href="/jobs">
                     <Button color="primary" variant="flat">
                         Browse Jobs
                     </Button>
@@ -40,7 +40,9 @@ const ApplyPage = async ({ params }) => {
     const applications = await getApplicationsByApplicant(applicant_id);
     const job = await getJobsById(id);
 
-    const plan = { name: 'Free Tier', maxApplicationsPerMonth: 3 };
+    // const plan = { name: 'Free Tier', maxApplicationsPerMonth: 3 };
+    const plan = await fetch(`http://localhost:5000/api/plans?plan=${user?.plan || 'seeker_free'}`).then(res => res.json())
+    // console.log(plan, 'plan vai plan vai r u there')
     const currentCount = applications?.length || 0;
     const limitReached = currentCount >= plan.maxApplicationsPerMonth;
     const usagePercentage = (currentCount / plan.maxApplicationsPerMonth) * 100;
@@ -60,55 +62,8 @@ const ApplyPage = async ({ params }) => {
                 </Link>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                
-                {/* Left Side: Job Info & Application Form */}
-                <div className="lg:col-span-2 space-y-6">
-                    <Card variant="default" className="w-full border border-slate-100 dark:border-slate-800">
-                        <Card.Header className="flex flex-col items-start gap-2 p-6 pb-4">
-                            <div className="flex gap-2 items-center">
-                                <Chip size="sm" color="primary" variant="flat" className="capitalize">{job.type || 'Full-time'}</Chip>
-                                <Chip size="sm" color="default" variant="flat">{job.location || 'Remote'}</Chip>
-                            </div>
-                            <Card.Title className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
-                                Apply for {job.title}
-                            </Card.Title>
-                            <Card.Description className="text-slate-500 text-sm font-medium">
-                                at {job.company || 'Confidential Company'}
-                            </Card.Description>
-                        </Card.Header>
-                        
-                        <Card.Content className="p-6">
-                            {limitReached ? (
-                                <div className="p-6 border border-warning-200 bg-warning-50/50 dark:bg-warning-950/20 rounded-xl text-center space-y-4">
-                                    <div className="mx-auto w-12 h-12 bg-warning-100 text-warning rounded-full flex items-center justify-center">
-                                        <CircleExclamationFill width={24} height={24} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-warning-800 dark:text-warning-400">Application Limit Reached</h3>
-                                        <p className="text-sm text-warning-600 dark:text-warning-500 mt-1 max-w-md mx-auto">
-                                            You have used all {plan.maxApplicationsPerMonth} of your monthly standard applications allowed on the <span className="font-semibold">{plan.name}</span>.
-                                        </p>
-                                    </div>
-                                    <Link href={"/plans"} className="font-semibold inline-flex items-center gap-1 text-warning hover:underline">
-                                        Upgrade Plan <Rocket width={16} height={16} />
-                                    </Link>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg text-sm text-slate-600 dark:text-slate-400 flex items-start gap-3">
-                                        <CircleCheck className="text-success mt-0.5 shrink-0" width={18} height={18} />
-                                        <span>Your profile data and CV will be automatically shared with the hiring manager reviewing this position.</span>
-                                    </div>
-                                    <JobApply job={job} applicant={user} />
-                                </div>
-                            )}
-                        </Card.Content>
-                    </Card>
-                </div>
-
-                {/* Right Side: Account Plan Limits Tracker */}
-                <div className="space-y-6">
+            {/* Right Side: Account Plan Limits Tracker */}
+            <div className="space-y-6 m-5">
                     <Card variant="secondary" className="w-full border border-slate-100 dark:border-slate-800 bg-gradient-to-b from-white to-slate-50/50 dark:from-slate-950 dark:to-slate-900">
                         <Card.Content className="p-6 space-y-6">
                             <div>
@@ -161,6 +116,56 @@ const ApplyPage = async ({ params }) => {
                         </Card.Content>
                     </Card>
                 </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                
+                {/* Left Side: Job Info & Application Form */}
+                <div className="lg:col-span-2 space-y-6">
+                    <Card variant="default" className="w-full border border-slate-100 dark:border-slate-800">
+                        <Card.Header className="flex flex-col items-start gap-2 p-6 pb-4">
+                            <div className="flex gap-2 items-center">
+                                <Chip size="sm" color="primary" variant="flat" className="capitalize">{job.type || 'Full-time'}</Chip>
+                                <Chip size="sm" color="default" variant="flat">{job.location || 'Remote'}</Chip>
+                            </div>
+                            <Card.Title className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
+                                Apply for {job.title}
+                            </Card.Title>
+                            <Card.Description className="text-slate-500 text-sm font-medium">
+                                at {job.company || 'Confidential Company'}
+                            </Card.Description>
+                        </Card.Header>
+                        
+                        <Card.Content className="p-6">
+                            {limitReached ? (
+                                <div className="p-6 border border-warning-200 bg-warning-50/50 dark:bg-warning-950/20 rounded-xl text-center space-y-4">
+                                    <div className="mx-auto w-12 h-12 bg-warning-100 text-warning rounded-full flex items-center justify-center">
+                                        <CircleExclamationFill width={24} height={24} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-warning-800 dark:text-warning-400">Application Limit Reached</h3>
+                                        <p className="text-sm text-warning-600 dark:text-warning-500 mt-1 max-w-md mx-auto">
+                                            You have used all {plan.maxApplicationsPerMonth} of your monthly standard applications allowed on the <span className="font-semibold">{plan.name}</span>.
+                                        </p>
+                                    </div>
+                                    <Link href={"/plans"} className="font-semibold inline-flex items-center gap-1 text-warning hover:underline">
+                                        Upgrade Plan <Rocket width={16} height={16} />
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-lg text-sm text-slate-600 dark:text-slate-400 flex items-start gap-3">
+                                        <CircleCheck className="text-success mt-0.5 shrink-0" width={18} height={18} />
+                                        <span>Your profile data and CV will be automatically shared with the hiring manager reviewing this position.</span>
+                                    </div>
+                                    <JobApply job={job} applicant={user} />
+                                </div>
+                            )}
+                        </Card.Content>
+                    </Card>
+                </div>
+
+                
+                
 
             </div>
         </main>

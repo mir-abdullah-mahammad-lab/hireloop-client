@@ -38,6 +38,8 @@ const SignUpPage = () => {
             setLoading(false);
             return;
         }
+        
+        const plan = role === 'seeker' ? 'seeker_free' : 'recruiter_free'
 
         try {
             const response = await authClient.signUp.email({
@@ -45,6 +47,7 @@ const SignUpPage = () => {
                 password,
                 name,
                 role,
+                plan
                 
             });
 
