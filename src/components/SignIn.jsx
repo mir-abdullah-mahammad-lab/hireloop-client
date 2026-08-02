@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@heroui/react';
@@ -8,7 +8,7 @@ import { ArrowLeft, Eye, EyeSlash } from '@gravity-ui/icons';
 import { authClient } from '@/lib/auth-client';
 import { TextField, Label, InputGroup } from "@heroui/react";
 
-const SignInForm = () => {
+const SignIn = () => {
       const router = useRouter();
 
     // Form Field States
@@ -157,4 +157,4 @@ const SignInForm = () => {
     );
 };
 
-export default SignInForm;
+export default SignIn;
