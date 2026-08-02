@@ -1,18 +1,44 @@
 import { ComponentType, SVGProps } from "react";
 
-import { LayoutSideContentLeft, Bell, Envelope, Gear, House, Magnifier, Person } from "@gravity-ui/icons";
-import { Button, Drawer } from "@heroui/react";
+import { Bell, Envelope, Gear, House, Magnifier, Person } from "@gravity-ui/icons";
+import {  Drawer } from "@heroui/react";
 import Link from "next/link";
+import { getUserSession } from "@/lib/core/session";
 
-const DashboardSidebar = () => {
-    const navItems = [
+const DashboardSidebar = async () => {
+    const user = await getUserSession()
+    const recruiterNavLinks = [
         { icon: House, href:`/dashboard/recruiter`, label: "Home" },
         { icon: Magnifier, href:"/dashboard/recruiter/jobs", label:"jobs"},
         { icon: Bell, href:"/dashboard/recruiter/jobs/new", label: "Create A Job" },
-        { icon: Envelope,href: "/message", label: "Messages" },
-        { icon: Person,href:"/profile", label: "Profile" },
+        { icon: Envelope, href: "/message", label: "Messages" },
+        { icon: Person, href:"/profile", label: "Profile" },
         { icon: Gear, href:"/settings",label: "Settings" },
     ];
+
+    const seekerNavLinks = [
+    { icon: House, href: "/dashboard/seeker", label: "Dashboard" },
+    { icon: Magnifier, href: "/dashboard/seeker/jobs", label: "Jobs" },
+    { icon: Bell, href: "/dashboard/seeker/saved-jobs", label: "Saved Jobs" },
+    { icon: Envelope, href: "/dashboard/seeker/applications", label: "Applications" },
+    { icon: Person, href: "/dashboard/seeker/billing", label: "Billing" },
+    { icon: Gear, href: "/dashboard/seeker/settings", label: "Settings" },
+];
+    const adminNavLinks = [
+    { icon: House, href: "/dashboard/admin", label: "Dashboard" },
+    { icon: Magnifier, href: "/dashboard/admin/jobs", label: "Jobs" },
+    { icon: Bell, href: "/dashboard/admin/saved-jobs", label: "Saved Jobs" },
+    { icon: Envelope, href: "/dashboard/admin/applications", label: "Applications" },
+    { icon: Person, href: "/dashboard/admin/billing", label: "Billing" },
+    { icon: Gear, href: "/dashboard/admin/settings", label: "Settings" },
+];
+    const navLinksMap = {
+    seeker : seekerNavLinks,
+    recruiter : recruiterNavLinks,
+    admin: adminNavLinks
+ }
+
+    const navItems =navLinksMap[user?.role || 'seeker']
     const navContent = navItems.map((item) => (
         <Link
             key={item.label}
@@ -27,27 +53,7 @@ const DashboardSidebar = () => {
     return (
         <div>
             <aside className="hidden w-64 shrink-0 border-r border-default p-4 lg:block">{navContent}</aside>
-            <Drawer>
-                <Button variant="secondary">
-                    <LayoutSideContentLeft />
-                    Menu
-                </Button>
-                <Drawer.Backdrop>
-                    <Drawer.Content placement="left">
-                        <Drawer.Dialog>
-                            <Drawer.CloseTrigger />
-                            <Drawer.Header>
-                                <Drawer.Heading>Navigation</Drawer.Heading>
-                            </Drawer.Header>
-                            <Drawer.Body>
-                                <nav className="flex flex-col gap-1">
-                                    {navContent}
-                                </nav>
-                            </Drawer.Body>
-                        </Drawer.Dialog>
-                    </Drawer.Content>
-                </Drawer.Backdrop>
-            </Drawer>
+           
         </div>
     );
 };

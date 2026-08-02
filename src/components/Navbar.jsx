@@ -10,9 +10,11 @@ import { useRouter } from 'next/navigation';
 
 const Navbar =()=> {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
- const {data : session,isPending } = useSession()
-//  console.log(session?.user, `ispending= ${isPending}`)
+const {data : session,isPending } = useSession()
+// console.log(session?.user, `ispending= ${isPending}`)
 const user = session?.user
+console.log(user, 'hello user ')
+console.log(user?.email, 'where is email??')
 const router = useRouter()
 
 const handleSignOut = async()=>{
@@ -38,6 +40,24 @@ const handleSignOut = async()=>{
       href: "/plans",
     },
   ];
+  const dashboardLinks ={
+    seeker:'/dashboard/seeker',
+    recruiter: '/dashboard/recruiter',
+    admin:'/dashboard/admin'
+
+  }
+  if(user?.email){
+
+    console.log(dashboardLinks[user?.role], 'effectssssssss')
+
+    navItems.push(
+      {
+        label:'Dashboard',
+        href: dashboardLinks[user?.role || 'seeker'] 
+      }
+    )
+  }
+  console.log(navItems, 'check navitems')
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-black/70 backdrop-blur-xl border-b border-white/10">

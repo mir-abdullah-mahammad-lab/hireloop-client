@@ -18,6 +18,7 @@ const JobApply = ({ job, applicant }) => {
     // Add the structural IDs for your MongoDB backend / Better Auth session
     const submissionData = {
       ...data,
+      status:'applied',
       jobId: job?._id,
       applicantId: applicant?.id,
     };
@@ -27,7 +28,7 @@ const JobApply = ({ job, applicant }) => {
     // const res = await serverMutation('/api/applications', submissionData)
 
     //direct api try 
-    const res = await fetch(`http://localhost:5000/api/applications`,{
+    const res = await fetch(`${process.env.PUBLIC_BASE_URL}/api/applications`,{
         method: 'POST',
         headers:{
             "Content-Type":"application/json"

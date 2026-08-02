@@ -7,7 +7,7 @@ const RecruiterDashboardHomePage = () => {
   const {data:session, isPending} = useSession()
 
  if(isPending){
-  return <>Loading...</>
+  return <div>Loading...</div>
  }
  const user = session?.user
  console.log(user, 'session from user')

@@ -41,7 +41,7 @@ const ApplyPage = async ({ params }) => {
     const job = await getJobsById(id);
 
     // const plan = { name: 'Free Tier', maxApplicationsPerMonth: 3 };
-    const plan = await fetch(`http://localhost:5000/api/plans?plan=${user?.plan || 'seeker_free'}`).then(res => res.json())
+    const plan = await fetch(`${process.env.PUBLIC_BASE_URL}/api/plans?plan=${user?.plan || 'seeker_free'}`).then(res => res.json())
     // console.log(plan, 'plan vai plan vai r u there')
     const currentCount = applications?.length || 0;
     const limitReached = currentCount >= plan.maxApplicationsPerMonth;
